@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id                  String                @id @default(uuid())
+  email               String                @unique @db.VarChar(100)
+  name                String                @unique @db.VarChar(100)
+  country             String                @db.VarChar(3)
+  phone               String                @db.VarChar(20)
+  address             String                @db.VarChar(255)
+  isActive            Boolean               @default(true)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  RestaurantLegalInfo RestaurantLegalInfo[]
+  User                User[]
+}
+
+model RestaurantLegalInfo {
+  id                   String     @id @default(uuid())
+  name                 String     @db.VarChar(100)
+  email                String     @db.VarChar(100)
+  identificationType   String     @db.VarChar(12)
+  identificationNumber String     @db.VarChar(20)
+  comercialName        String     @db.VarChar(80)
+  address              String     @db.VarChar(255)
+  phone                String     @db.VarChar(20)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  restaurant           Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId         String
+}
+
+model User {
+  id           String     @id @default(uuid())
+  fullname     String     @db.VarChar(100)
+  username     String     @db.VarChar(25)
+  password     String     @db.VarChar(255)
+  isMaster     Boolean    @default(false)
+  isActive     Boolean    @default(true)
+  restarant    Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+}
