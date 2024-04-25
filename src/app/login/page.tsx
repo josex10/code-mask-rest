@@ -4,7 +4,6 @@ import LoginFormComponent from "@/components/login/loginForm";
 export default function LoginPage() {
   return (
     <section className="flex flex-row items-center  w-full h-screen">
-      {/* Logo */}
       <div className="w-1/2 flex justify-center">
         <Image
           priority
@@ -14,7 +13,6 @@ export default function LoginPage() {
           alt="Logo"
         />
       </div>
-      {/* Form */}
       <div className="w-1/2 ">
         <LoginFormComponent/>
       </div>
