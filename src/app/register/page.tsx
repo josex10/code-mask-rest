@@ -1,7 +1,5 @@
 import RegisterFormComponent from "@/components/register/registerForm.component";
 import Image from "next/image";
-import { Suspense } from "react";
-import RegisterLoadingPage from "./loading";
 
 export default function RegisterPage() {
   return (
@@ -18,9 +16,7 @@ export default function RegisterPage() {
       </div>
       {/* Form */}
       <div className="w-2/3 ">
-        <Suspense fallback={<RegisterLoadingPage/>}>
-          <RegisterFormComponent />
-        </Suspense>
+        <RegisterFormComponent />
       </div>
     </section>
   );
