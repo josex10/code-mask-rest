@@ -1,9 +1,13 @@
 "use server";
 
-
+import prismaConfig from "@/lib/config/prisma.config";
 import { RegisterSchema, TRegisterState } from "@/lib/schemas/register/registerSchema";
 
 export async function registerAction(prevState: TRegisterState, formData: FormData) {
+
+  const nada = await prismaConfig.restaurant.findMany();
+  console.log(nada);  
+
   const validatedFields = RegisterSchema.safeParse({
     restName: formData.get("restName"),
     email: formData.get("email"),

@@ -16,10 +16,26 @@ docker compose up -d
 
 * Run the app ``` npm run dev ```
 
-* Execute the following commands for prisma
-```
-    npx prisma migrate dev
-    npx prisma generate 
-```
+* If it's your first time running the app it's neccesary to set up some changes related with the DB
 
-* Execute the seed endpoint [create the base of the DB](localhost:3000/api/seed)
+    - Execute the following command to create the tables on DB based on the Prisma Schema
+        ``` npx prisma migrate dev --name init```
+    - Then you need be able to open your DB with some DB Manager like tablePlus
+    - if you can be able to open the DB run the following command to create seed data to start working ``` npm run seed```
+
+
+
+
+
+
+
+#Prisma
+
+Explanation of Prisma commands, also you can see the updated infor on the following link: https://www.prisma.io/docs/getting-started/quickstart
+
+``` npx prisma migrate dev --name init```
+This command did three things:
+
+1. It created a new SQL migration file for this migration in the prisma/migrations directory.
+2. It executed the SQL migration file against the database.
+3. It ran prisma generate under the hood (which installed the @prisma/client package and generated a tailored Prisma Client API based on your models).
