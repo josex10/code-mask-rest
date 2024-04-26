@@ -1,13 +1,15 @@
 "use server";
 
 import prismaConfig from "@/lib/config/prisma.config";
-import { RegisterSchema, TRegisterState } from "@/lib/schemas/register/registerSchema";
+import {
+  RegisterSchema,
+  TRegisterState,
+} from "@/lib/schemas/register/registerSchema";
 
-export async function registerAction(prevState: TRegisterState, formData: FormData) {
-
-  const nada = await prismaConfig.restaurant.findMany();
-  console.log(nada);  
-
+export async function registerAction(
+  prevState: TRegisterState,
+  formData: FormData
+) {
   const validatedFields = RegisterSchema.safeParse({
     restName: formData.get("restName"),
     email: formData.get("email"),
@@ -27,24 +29,93 @@ export async function registerAction(prevState: TRegisterState, formData: FormDa
     };
   }
 
-  return {
-    errors: {
-        restName: ['El nombre del restaurante ya se encuentra registrado']
-    },
-    message: "El nombre del restaurante no ha sido encontrado en la base de datos",
-  };
+  const {
+    restName,
+    email,
+    country,
+    phone,
+    address,
+    fullName,
+    username,
+    password,
+  } = validatedFields.data;
 
-  //   const amountInCents = amount * 100;
-  //   const date = new Date().toISOString().split("T")[0];
-  //   try {
-  //     await sql`
-  //         INSERT INTO invoices (customer_id, amount, status, date)
-  //         VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-  //       `;
+  try {
+    const checkRestName = await prismaConfig.restaurant.findFirst({
+      where: {
+        name: restName.toUpperCase(),
+      },
+    });
 
-  //     revalidatePath("/dashboard/invoices");
-  //   } catch (error) {
-  //     return { message: "Database Error: Failed to Create Invoice." };
-  //   }
-  //   redirect("/dashboard/invoices");
+    if (checkRestName) {
+      return {
+        errors: {
+          restName: ["El nombre del restaurante ya se encuentra registrado"],
+        },
+        message:
+          "El nombre del restaurante no ha sido encontrado en la base de datos",
+      };
+    }
+
+    const checkEmail = await prismaConfig.restaurant.findFirst({
+      where: {
+        email: email.toLowerCase(),
+      },
+    });
+
+    if (checkEmail) {
+      return {
+        errors: {
+          email: ["El correo electrónico ya se encuentra registrado"],
+        },
+        message:
+          "El correo electrónico no ha sido encontrado en la base de datos",
+      };
+    }
+
+    const checkUsername = await prismaConfig.user.findFirst({
+      where: {
+        username: username.toLowerCase(),
+      },
+    });
+
+    if (checkUsername) {
+      return {
+        errors: {
+          username: ["El nombre de usuario ya se encuentra registrado"],
+        },
+        message:
+          "El nombre de usuario no ha sido encontrado en la base de datos",
+      };
+    }
+
+    const newRestaurant = await prismaConfig.restaurant.create({
+      data: {
+        name: restName.toUpperCase(),
+        email: email,
+        country: country,
+        phone: phone,
+        address: address,
+      },
+    });
+
+    await prismaConfig.user.create({
+      data: {
+        fullname: fullName,
+        username,
+        password,
+        restaurantId: newRestaurant.id,
+      },
+    });
+
+    return {
+      errors: {},
+      message: "El restaurante se ha registrado correctamente",
+    };
+  } catch (error) {
+    return {
+      errors: {},
+      message: "Ha ocurrido un error en el servidor",
+    };
+  }
 }

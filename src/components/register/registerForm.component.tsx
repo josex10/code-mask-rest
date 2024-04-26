@@ -14,7 +14,8 @@ import { TRegisterState } from "@/lib/schemas/register/registerSchema";
 import { registerAction } from "@/lib/actions/register/register.actions";
 import InputComponent from "../shared/input.component";
 import { useFormState } from "react-dom";
-import { EInputType } from "../shared/input";
+import { EInputType } from "@/lib/definitions/shared/input.definitions";
+import ButtonSubmitComponent from "../shared/submitButton.component";
 
 export default function RegisterFormComponent() {
   const initialState: TRegisterState = { errors: {}, message: null };
@@ -76,6 +77,7 @@ export default function RegisterFormComponent() {
           errors={state.errors?.address}
           placeholder="Dirección"
         />
+
         <section className="flex gap-5">
           <div className="w-full">
             <InputComponent
@@ -105,6 +107,7 @@ export default function RegisterFormComponent() {
               icon={<LockClosedIcon />}
               errors={state.errors?.password}
               placeholder="Contraseña"
+              type={EInputType.password}
             />
           </div>
           <div className="w-full">
@@ -114,15 +117,14 @@ export default function RegisterFormComponent() {
               icon={<LockClosedIcon />}
               errors={state.errors?.confirmPassword}
               placeholder="Confirmar Contraseña"
+              type={EInputType.password}
             />
           </div>
         </section>
 
         {/* button */}
         <section className="flex justify-center">
-          <button className="bg-black py-[15px] rounded-2xl w-1/3 text-white hover:font-bold shadow-lg">
-            Registrarse
-          </button>
+          <ButtonSubmitComponent />
         </section>
 
         {/* Login */}
@@ -134,9 +136,6 @@ export default function RegisterFormComponent() {
             </Link>
           </p>
         </section>
-
-        {/* Loader */}
-        {/* <LoaderComponent /> */}
       </form>
     </section>
   );
