@@ -8,13 +8,9 @@ const InputComponent: FC<IInputProps> = ({
   type,
   icon,
   errors,
-  defaultValue, 
-  label
 }) => {
   return (
     <div className="relative mb-3">
-      (label && <label htmlFor={id}>{label}</label>)
-      <label htmlFor={id}></label>
       <input
         type={type ? type : "text"}
         id={id}
