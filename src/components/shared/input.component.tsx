@@ -1,6 +1,5 @@
 import { IInputProps } from "@/lib/definitions/shared/input.definitions";
-import { FC, useEffect } from "react";
-import { useRef } from 'react';
+import { FC } from "react";
 
 const InputComponent: FC<IInputProps> = ({
   name,
@@ -9,9 +8,13 @@ const InputComponent: FC<IInputProps> = ({
   type,
   icon,
   errors,
+  defaultValue, 
+  label
 }) => {
   return (
     <div className="relative mb-3">
+      (label && <label htmlFor={id}>{label}</label>)
+      <label htmlFor={id}></label>
       <input
         type={type ? type : "text"}
         id={id}
