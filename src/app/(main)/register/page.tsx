@@ -1,4 +1,5 @@
 import RegisterFormComponent from "@/components/register/registerForm.component";
+import FormLogoComponent from "@/components/shared/formLogo.component";
 import Image from "next/image";
 
 export default function RegisterPage() {
@@ -6,13 +7,7 @@ export default function RegisterPage() {
     <section className="flex flex-row items-center  w-full h-screen">
       {/* Logo */}
       <div className="w-1/3 flex justify-center">
-        <Image
-          priority
-          src="/logo-black.svg"
-          width={600}
-          height={600}
-          alt="Logo"
-        />
+        <FormLogoComponent/>
       </div>
       {/* Form */}
       <div className="w-2/3 ">

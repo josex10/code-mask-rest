@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: LogoFont;
+  src: url('../../public/fonts/east-bloc/east-bloc-icg-closed.ttf');
+}
+
 .remove-arrow::-webkit-inner-spin-button,
 .remove-arrow::-webkit-outer-spin-button {
   -webkit-appearance: none;
