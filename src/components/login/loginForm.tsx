@@ -1,69 +1,96 @@
 "use client";
 
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
-import { LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
-import { EInputType } from "@/lib/definitions/shared/input.definitions";
-import { TLoginState, loginAction } from "@/lib/actions/login/loginActions";
-import InputComponent from "../shared/input.component";
+import { loginAction } from "@/lib/actions/login/loginActions";
 
-function LoaderComponent() {
-  const { pending } = useFormStatus();
-  return (
-    <section
-      className={`w-full h-full absolute top-0 bg-blue-500 ${
-        !pending && "hidden"
-      }`}
-    >
-      {pending && <h1>Loader</h1>}
-    </section>
-  );
-}
+import { Input } from "@nextui-org/input";
+import { EyeSlashFilledIcon } from "@/lib/svg/EyeSlashFilled";
+import { EyeFilledIcon } from "@/lib/svg/EyeFilled";
+import { useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema } from "../../lib/schemas/login/login.schema";
+import { Button } from "@nextui-org/button";
 
 export default function LoginFormComponent() {
-  const initialState: TLoginState = { errors: {}, message: null };
-  const [state, dispatch] = useFormState(loginAction, initialState);
+  const [isVisible, setIsVisible] = useState(false);
+  const toggleVisibility = () => setIsVisible(!isVisible);
+  const [isSubmitting, setSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(LoginSchema) });
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setSubmitting(true);
+
+    const actionResults = await loginAction({}, data);
+
+    console.log(actionResults)
+
+    if(actionResults?.errors.path){
+      setError(actionResults.errors.path, { type: "custom", message: actionResults.errors.message });
+    }
+
+    setSubmitting(false);
+  };
+
   return (
-    <section>
-      <form action={dispatch} className="flex flex-col gap-5 m-48">
-        <h1 className="text-4xl text-center">Bienvenido</h1>
+    <section className="text-center">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+        <h1 className="text-4xl">Bienvenido</h1>
 
-        {/* Username */}
-        <InputComponent
-          name="username"
-          id="username"
-          icon={<UserIcon />}
-          errors={state.errors?.username}
-          placeholder="Nombre de Usuario"
+        <Input
+          type="text"
+          label="Nombre de Usuario"
+          placeholder="Ej: johndoe"
+          className="max-w-sm w-96"
+          variant="bordered"
+          {...register("username")}
+          isInvalid={errors.username ? true : false}
+          errorMessage={`${errors.username ? errors.username.message : ""}`}
         />
 
-        {/* Password */}
-        <InputComponent
-          name="password"
-          id="password"
-          icon={<LockClosedIcon />}
-          errors={state.errors?.password}
-          placeholder="Contraseña"
-          type={EInputType.password}
+        <Input
+          label="Contraseña"
+          variant="bordered"
+          placeholder="Ingrese su contraseña"
+          endContent={
+            <button
+              className="focus:outline-none"
+              type="button"
+              onClick={toggleVisibility}
+            >
+              {isVisible ? (
+                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+              ) : (
+                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+              )}
+            </button>
+          }
+          type={isVisible ? "text" : "password"}
+          className="max-w-sm w-96"
+          {...register("password")}
+          isInvalid={errors.password ? true : false}
+          errorMessage={`${errors.password ? errors.password.message : ""}`}
         />
 
-        {/* button */}
-        <button className="bg-black py-[15px] rounded-2xl w-full text-white hover:font-bold shadow-lg">
+        <Button type="submit" color="primary" isLoading={isSubmitting}>
           Ingresar
-        </button>
+        </Button>
 
         {/* Register */}
         <section>
-          <p className="font-extralight text-center    ">
+          <p className="font-extralight">
             No tienes cuenta? Regístrese{" "}
             <Link className="font-bold  hover:underline" href={`/register`}>
               aquí
             </Link>
           </p>
         </section>
-
-        {/* Loader */}
-        {/* <LoaderComponent /> */}
       </form>
     </section>
   );

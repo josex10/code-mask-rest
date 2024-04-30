@@ -36,7 +36,7 @@ export default function NavbarComponent() {
   ];
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen}>
+    <Navbar onMenuOpenChange={setIsMenuOpen} className="h-[8vh]">
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -54,11 +54,11 @@ export default function NavbarComponent() {
 
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="/login">Login</Link>
+          <Link href="/login">Ingresar</Link>
         </NavbarItem>
         <NavbarItem>
           <Button as={Link} color="primary" href="/register" variant="flat">
-            Sign Up
+            Registro
           </Button>
         </NavbarItem>
         <NavbarItem>
