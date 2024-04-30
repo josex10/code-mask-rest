@@ -29,7 +29,7 @@ export async function loginAction(
 
   if (!validatedFields.success) {
     return {
-      errors: { path: "general", message: "Campos requeridos faltantes" },
+      errors: { path: "general", message: "Error en la validación de los datos" },
     };
   }
 
@@ -48,7 +48,6 @@ export async function loginAction(
         },
       };
     }
-
     const comparePwd = await bcrypt.compare(password, dbUser.password);
 
     if (!comparePwd) {
