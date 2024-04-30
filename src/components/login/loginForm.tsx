@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { loginAction } from "@/lib/actions/login/loginActions";
+import { toast } from 'react-hot-toast';
 
 import { Input } from "@nextui-org/input";
 import { EyeSlashFilledIcon } from "@/lib/svg/EyeSlashFilled";
@@ -29,12 +30,11 @@ export default function LoginFormComponent() {
 
     const actionResults = await loginAction({}, data);
 
-    console.log(actionResults)
-
     if(actionResults?.errors.path){
-      setError(actionResults.errors.path, { type: "custom", message: actionResults.errors.message });
+      (actionResults.errors.path === 'general') 
+        ?toast.error(actionResults.errors.message)
+        :setError(actionResults.errors.path, { type: "custom", message: actionResults.errors.message });
     }
-
     setSubmitting(false);
   };
 
