@@ -29,7 +29,7 @@ export async function loginAction(
 
   if (!validatedFields.success) {
     return {
-      errors: { path: "general", message: "Missing Fields. Failed to Login" },
+      errors: { path: "general", message: "Campos requeridos faltantes" },
     };
   }
 
@@ -44,7 +44,18 @@ export async function loginAction(
       return {
         errors: {
           path: "username",
-          message: "Nombre de usuario no identificado",
+          message: "Credeciales incorrectas",
+        },
+      };
+    }
+
+    const comparePwd = await bcrypt.compare(password, dbUser.password);
+
+    if (!comparePwd) {
+      return {
+        errors: {
+          path: "password",
+          message: "Credeciales incorrectas",
         },
       };
     }
@@ -58,19 +69,8 @@ export async function loginAction(
     if (!dbRestaurant) {
       return {
         errors: {
-          path: "username",
-          message: "Nombre de usuario no identificado",
-        },
-      };
-    }
-
-    const comparePwd = await bcrypt.compare(password, dbUser.password);
-
-    if (!comparePwd) {
-      return {
-        errors: {
           path: "general",
-          message: "Informacion del restaurante invalida",
+          message: "Información del Restaurante erronea",
         },
       };
     }
@@ -83,24 +83,29 @@ export async function loginAction(
 
     const jwt = await setToken(payload);
 
-    if (!setCokkie(jwt))  return {
+    if (!setCokkie(jwt)) {
+      return {
+        errors: {
+          path: "general",
+          message: "Error en el proceso de autenticación",
+        },
+      };
+    } 
+
+    
+  } catch (error) {
+    return {
       errors: {
         path: "general",
-        message: "Error en el proceso de autenticación",
+        message: "Ha ocurrido un error en el sistema. Intente mas tarde",
       },
     };
-
-   
-  } catch (error) {
-    console.log(error);
   }
 
   redirect("/dashboard");
 }
 
-
 export async function logoutAction() {
   removeCookie();
   redirect("/login");
 }
-
