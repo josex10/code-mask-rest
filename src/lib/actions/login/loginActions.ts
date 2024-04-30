@@ -1,56 +1,106 @@
 "use server";
-import { z } from "zod";
 
-const LoginSchema = z.object({
-  username: z
-    .string({ message: "Campo de tipo caracter" })
-    .min(1, { message: "Campo Requerido" })
-    .max(25, { message: "Máx. 50 caracteres." }),
-  password: z
-    .string({ message: "Campo de tipo caracter" })
-    .min(8, { message: "Campo Requerido, Min 8 caracteres" })
-    .max(16, { message: "Máx. 16 caracteres." }),
-});
+import { LoginSchema } from "@/lib/schemas/login/login.schema";
+import { FieldValues } from "react-hook-form";
+import prismaConfig from "@/lib/config/prisma.config";
+import { redirect } from "next/navigation";
+const bcrypt = require("bcrypt");
+import { removeCookie, setCokkie } from "@/lib/helpers/cookies.helper";
+import { TCookie } from "@/lib/definitions/shared/cookie.definitions";
+import { setToken } from "@/lib/helpers/jwt.herlper";
 
 export type TLoginState = {
   errors?: {
-    username?: string[];
-    password?: string[];
+    path?: string;
+    message?: string;
   };
-  message?: string | null;
+  message?: string;
 };
 
-export async function loginAction(prevState: TLoginState, formData: FormData) {
+export async function loginAction(
+  prevState: TLoginState,
+  formData: FieldValues
+) {
+  const { username, password } = formData;
   const validatedFields = LoginSchema.safeParse({
-    username: formData.get("username"),
-    password: formData.get("password"),
+    username,
+    password,
   });
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Missing Fields. Failed to Login.",
+      errors: { path: "general", message: "Missing Fields. Failed to Login" },
     };
   }
 
-  return {
-    errors: {
-      username: ['Nombre de usuario inválido']
-    },
-    message: "El nombre de usuario no ha sido encontrado en la base de datos",
-  };
+  try {
+    const dbUser = await prismaConfig.user.findFirst({
+      where: {
+        username: username.toLowerCase(),
+      },
+    });
 
-  //   const amountInCents = amount * 100;
-  //   const date = new Date().toISOString().split("T")[0];
-  //   try {
-  //     await sql`
-  //         INSERT INTO invoices (customer_id, amount, status, date)
-  //         VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-  //       `;
+    if (!dbUser) {
+      return {
+        errors: {
+          path: "username",
+          message: "Nombre de usuario no identificado",
+        },
+      };
+    }
 
-  //     revalidatePath("/dashboard/invoices");
-  //   } catch (error) {
-  //     return { message: "Database Error: Failed to Create Invoice." };
-  //   }
-  //   redirect("/dashboard/invoices");
+    const dbRestaurant = await prismaConfig.restaurant.findFirst({
+      where: {
+        id: dbUser.restaurantId,
+      },
+    });
+
+    if (!dbRestaurant) {
+      return {
+        errors: {
+          path: "username",
+          message: "Nombre de usuario no identificado",
+        },
+      };
+    }
+
+    const comparePwd = await bcrypt.compare(password, dbUser.password);
+
+    if (!comparePwd) {
+      return {
+        errors: {
+          path: "general",
+          message: "Informacion del restaurante invalida",
+        },
+      };
+    }
+
+    const payload: TCookie = {
+      username: dbUser.username,
+      restaurantId: dbUser.restaurantId,
+      restaurantName: dbRestaurant.name,
+    };
+
+    const jwt = await setToken(payload);
+
+    if (!setCokkie(jwt))  return {
+      errors: {
+        path: "general",
+        message: "Error en el proceso de autenticación",
+      },
+    };
+
+   
+  } catch (error) {
+    console.log(error);
+  }
+
+  redirect("/dashboard");
 }
+
+
+export async function logoutAction() {
+  removeCookie();
+  redirect("/login");
+}
+

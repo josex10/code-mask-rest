@@ -1,17 +1,13 @@
 import LoginFormComponent from "@/components/login/loginForm";
-import FormLogoComponent from "@/components/shared/formLogo.component";
+import { getCookie } from "@/lib/helpers/cookies.helper";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
+  const cookie = getCookie();
+  if(cookie) redirect("/dashboard");
   return (
-    <section className="flex flex-row items-center  w-full h-screen">
-      {/* Logo */}
-      <div className="w-1/2 flex justify-center">
-        <FormLogoComponent/>
-      </div>
-      {/* Form */}
-      <div className="w-1/2 ">
-        <LoginFormComponent/>
-      </div>
+    <section className="h-full flex items-center justify-center w-full">
+      <LoginFormComponent/>
     </section>
   );
 }

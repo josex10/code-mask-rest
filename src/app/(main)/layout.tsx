@@ -6,9 +6,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <section>
+    <section className=" h-screen">
       <NavbarComponent />
-      {children}
+      <section className="h-[92vh]">{children}</section>
     </section>
   );
 }
