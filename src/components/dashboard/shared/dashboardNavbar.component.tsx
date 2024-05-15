@@ -21,7 +21,7 @@ export const DashboardNavbarComponent = async () => {
     <Navbar position="sticky" className="bg-content1" maxWidth="full">
       <NavbarBrand>
         <p className="font-bold text-inherit">
-          {cookie && cookie.restaurantName}
+          {cookie ? cookie.restaurantName : ''}
         </p>
       </NavbarBrand>
       <NavbarContent justify="end">

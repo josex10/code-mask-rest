@@ -29,24 +29,23 @@ export const setCokkie = (jwt: string): boolean => {
   return true;
 };
 
-export const getCookiePayload = async () => {
+export const getCookiePayload = async (): Promise<TCookiePayload | undefined> => {
   const cookie = getCookie();
-  if (!cookie) {
-    return NextResponse.redirect(new URL("/login"));
-  }
-
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-  const jwt = cookie.value;
-
   try {
-    const { payload } = await jose.jwtVerify(jwt, secret, {});
-    if(payload.sub){
-      return JSON.parse(payload.sub) as TCookiePayload;
-    } else {
-      return NextResponse.redirect(new URL("/login"));
+    if (!cookie) {
+      throw new Error('Invalid cookie')
     }
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const jwt = cookie.value;
+    const { payload } = await jose.jwtVerify(jwt, secret, {});
+    if(!payload.sub){
+      throw NextResponse.redirect(new URL("/login"));
+      
+    } 
+
+    return JSON.parse(payload.sub) as TCookiePayload;
   } catch (err) {
-    return NextResponse.redirect(new URL("/login"));
+    NextResponse.redirect(new URL("/login"));
   }
 };
 
