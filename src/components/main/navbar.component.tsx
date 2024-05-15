@@ -73,7 +73,6 @@ export default function NavbarComponent() {
               }
               className="w-full"
               href="#"
-              size="lg"
             >
               {item}
             </Link>
