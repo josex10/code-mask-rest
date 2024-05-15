@@ -14,13 +14,11 @@ import {
 import Link from "next/link";
 
 import { ThemeSwitcherComponent } from "../shared/themeSwitcher.component";
-import { MaskOnlyLogoLight } from "@/lib/svg/maskonlyLogoLight";
-import { useTheme } from "next-themes";
-import { MaskOnlyLogoDark } from "@/lib/svg/maskOnlyLogoDark";
+import Image from "next/image";
 
 export default function NavbarComponent() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { theme } = useTheme();
+
 
   const menuItems = [
     "Profile",
@@ -36,19 +34,15 @@ export default function NavbarComponent() {
   ];
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen} className="h-[8vh]">
+    <Navbar onMenuOpenChange={setIsMenuOpen} className="h-[8vh] bg-content1" >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
         <NavbarBrand>
-          {theme === "dark" ? (
-              <MaskOnlyLogoLight />
-          ) : (
-            <MaskOnlyLogoDark />
-          )}
-          <p className="font-bold text-inherit text-2xl font-['LogoFont'] text-sky-500">Mask Code</p>
+          <Image src="/maskChef.logo.png" alt="Mask Code Logo" width={60} height={60} />
+          <p className="font-bold text-inherit text-2xl font-['LogoFont'] tracking-widest ml-4">Mask Code</p>
         </NavbarBrand>
       </NavbarContent>
 
@@ -57,7 +51,7 @@ export default function NavbarComponent() {
           <Link href="/login">Ingresar</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="/register" variant="flat">
+          <Button as={Link} color="primary" href="/register">
             Registro
           </Button>
         </NavbarItem>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { loginAction } from "@/lib/actions/login/loginActions";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 
 import { Input } from "@nextui-org/input";
 import { EyeSlashFilledIcon } from "@/lib/svg/EyeSlashFilled";
@@ -30,17 +30,20 @@ export default function LoginFormComponent() {
 
     const actionResults = await loginAction({}, data);
 
-    if(actionResults?.errors.path){
-      (actionResults.errors.path === 'general') 
-        ?toast.error(actionResults.errors.message)
-        :setError(actionResults.errors.path, { type: "custom", message: actionResults.errors.message });
+    if (actionResults?.errors.path) {
+      actionResults.errors.path === "general"
+        ? toast.error(actionResults.errors.message)
+        : setError(actionResults.errors.path, {
+            type: "custom",
+            message: actionResults.errors.message,
+          });
     }
     setSubmitting(false);
   };
 
   return (
     <section className="text-center">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 bg-content1 p-6 rounded-xl">
         <h1 className="text-4xl">Bienvenido</h1>
 
         <Input
@@ -78,9 +81,11 @@ export default function LoginFormComponent() {
           errorMessage={`${errors.password ? errors.password.message : ""}`}
         />
 
-        <Button type="submit" color="primary" isLoading={isSubmitting}>
-          Ingresar
-        </Button>
+        <section className="flex w-full justify-center">
+          <Button type="submit" color="primary" isLoading={isSubmitting}>
+            Ingresar
+          </Button>
+        </section>
 
         {/* Register */}
         <section>

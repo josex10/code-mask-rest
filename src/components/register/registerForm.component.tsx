@@ -46,7 +46,7 @@ export default function RegisterFormComponent() {
     <section>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-5 m-10"
+        className="flex flex-col gap-5 m-10 bg-content1 p-6 rounded-xl"
       >
         <h1 className="text-4xl text-center">Registro</h1>
 
@@ -76,6 +76,7 @@ export default function RegisterFormComponent() {
 
         <section className="flex gap-5">
           <Select
+            variant="bordered"
             label="País"
             placeholder="Seleccione un país"
             className="max-w-sm w-96"
@@ -189,9 +190,15 @@ export default function RegisterFormComponent() {
         </section>
 
         {/* button */}
-        <Button type="submit" color="primary" isLoading={isSubmitting}>
-          Registrarse
-        </Button>
+        <section className="flex justify-center w-full">
+          <Button
+            type="submit"
+            color="primary"
+            isLoading={isSubmitting}
+          >
+            Registrarse
+          </Button>
+        </section>
 
         {/* Login */}
         <section className="flex justify-center">
