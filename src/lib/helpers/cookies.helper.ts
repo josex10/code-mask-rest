@@ -32,7 +32,7 @@ export const setCokkie = (jwt: string): boolean => {
 export const getCookiePayload = async () => {
   const cookie = getCookie();
   if (!cookie) {
-    throw new Error("Invalid token");
+    return NextResponse.redirect(new URL("/login"));
   }
 
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -43,10 +43,10 @@ export const getCookiePayload = async () => {
     if(payload.sub){
       return JSON.parse(payload.sub) as TCookiePayload;
     } else {
-      throw new Error("Invalid token");
+      return NextResponse.redirect(new URL("/login"));
     }
   } catch (err) {
-    NextResponse.redirect(new URL("/login"));
+    return NextResponse.redirect(new URL("/login"));
   }
 };
 
